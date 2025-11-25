@@ -2,12 +2,468 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>My GitHub Pages Site</title>
-    <link rel="stylesheet" href="styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Flipp URL → DVM Kit Builder</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #0b0f17;
+        --card: rgba(255, 255, 255, 0.06);
+        --text: rgba(255, 255, 255, 0.92);
+        --muted: rgba(255, 255, 255, 0.65);
+        --border: rgba(255, 255, 255, 0.14);
+        --accent: #6ee7ff;
+        --danger: #ff6b6b;
+        --ok: #63f59b;
+        --shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+          "Courier New", monospace;
+        --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+          "Apple Color Emoji", "Segoe UI Emoji";
+      }
+
+      @media (prefers-color-scheme: light) {
+        :root {
+          --bg: #f6f7fb;
+          --card: rgba(255, 255, 255, 0.9);
+          --text: rgba(16, 24, 40, 0.92);
+          --muted: rgba(16, 24, 40, 0.62);
+          --border: rgba(16, 24, 40, 0.12);
+          --shadow: 0 10px 30px rgba(16, 24, 40, 0.12);
+        }
+      }
+
+      body {
+        margin: 0;
+        font-family: var(--sans);
+        background: radial-gradient(1200px 800px at 20% 10%, rgba(110, 231, 255, 0.18), transparent 55%),
+          radial-gradient(900px 600px at 80% 0%, rgba(99, 245, 155, 0.16), transparent 50%),
+          var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 28px 16px;
+      }
+
+      .wrap {
+        width: min(980px, 100%);
+      }
+
+      .header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 14px;
+      }
+
+      h1 {
+        font-size: clamp(20px, 2vw + 14px, 28px);
+        margin: 0;
+        letter-spacing: -0.02em;
+      }
+
+      .sub {
+        margin: 8px 0 0;
+        color: var(--muted);
+        line-height: 1.4;
+        font-size: 14px;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 16px;
+      }
+
+      label {
+        display: block;
+        font-size: 13px;
+        color: var(--muted);
+        margin: 0 0 8px;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        box-sizing: border-box;
+        font-family: var(--mono);
+        font-size: 13px;
+        padding: 12px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: rgba(0, 0, 0, 0.12);
+        color: var(--text);
+        outline: none;
+      }
+
+      @media (prefers-color-scheme: light) {
+        input[type="text"] {
+          background: rgba(255, 255, 255, 0.8);
+        }
+      }
+
+      input[type="text"]:focus {
+        border-color: color-mix(in oklab, var(--accent) 55%, var(--border));
+        box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 22%, transparent);
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+        padding: 0 16px 16px;
+      }
+
+      button {
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text);
+        padding: 10px 12px;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.05s ease, background 0.15s ease, border-color 0.15s ease;
+      }
+      button:hover {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: color-mix(in oklab, var(--accent) 35%, var(--border));
+      }
+      button:active {
+        transform: translateY(1px);
+      }
+
+      .pill {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--muted);
+        border: 1px dashed var(--border);
+        padding: 8px 10px;
+        border-radius: 999px;
+      }
+
+      .result {
+        border-top: 1px solid var(--border);
+        padding: 16px;
+      }
+
+      .result h2 {
+        font-size: 14px;
+        margin: 0 0 10px;
+        color: var(--muted);
+        letter-spacing: 0.01em;
+        font-weight: 650;
+      }
+
+      .out {
+        display: grid;
+        gap: 10px;
+      }
+
+      .urlbox {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        line-height: 1.35;
+        padding: 12px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        background: rgba(0, 0, 0, 0.14);
+        word-break: break-all;
+      }
+      @media (prefers-color-scheme: light) {
+        .urlbox {
+          background: rgba(255, 255, 255, 0.8);
+        }
+      }
+
+      .meta {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .kv {
+        font-family: var(--mono);
+        font-size: 12px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 8px 10px;
+        background: rgba(255, 255, 255, 0.06);
+      }
+      .kv b {
+        color: var(--text);
+        font-weight: 700;
+      }
+
+      .status {
+        margin-top: 10px;
+        font-size: 13px;
+      }
+      .status.ok {
+        color: var(--ok);
+      }
+      .status.err {
+        color: var(--danger);
+      }
+
+      .hint {
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 12.5px;
+        line-height: 1.45;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
   </head>
+
   <body>
-    <h1>Hello from GitHub Pages</h1>
-    <script src="script.js"></script>
+    <div class="wrap">
+      <div class="header">
+        <div>
+          <h1>Flipp Curator URL → DVM Kit URL</h1>
+          <p class="sub">
+            Paste a curator URL, then copy/open the generated Holodeck mock URL.
+          </p>
+        </div>
+        <div class="pill" id="liveBadge" title="Updates as you type">live</div>
+      </div>
+
+      <div class="card">
+        <div class="grid">
+          <div>
+            <label for="inputUrl">Input URL</label>
+            <input
+              id="inputUrl"
+              type="text"
+              spellcheck="false"
+              placeholder="https://dev-api.flipp.com/curator/v2/publications/01K... ?merchantId=...&storeCode=..."
+              value="https://dev-api.flipp.com/curator/v2/publications/01KADGPN4S8WX0NBZZ601ND8DG?renderingMetadataType=RENDERING_METADATA_TYPE_DVM_TEMPLATE&merchantId=2906&storeCode=330"
+            />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="buildBtn" type="button">Build URL</button>
+          <button id="copyBtn" type="button" disabled>Copy result</button>
+          <button id="openBtn" type="button" disabled>Open result</button>
+          <span class="pill" id="parseMode">Parsing: URL API + path match</span>
+        </div>
+
+        <div class="result">
+          <h2>Result</h2>
+
+          <div class="out">
+            <div class="meta" id="metaChips" aria-live="polite"></div>
+
+            <div class="urlbox" id="outputUrl" aria-live="polite">
+              Paste an input URL to generate the result.
+            </div>
+
+            <div class="status" id="status" aria-live="polite"></div>
+
+            <div class="hint">
+              Tip: it accepts either full curator URLs or anything with
+              <span style="font-family: var(--mono)">/publications/&lt;id&gt;</span> plus query
+              params <span style="font-family: var(--mono)">merchantId</span> and
+              <span style="font-family: var(--mono)">storeCode</span>.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ---- Config for the target URL we build
+      const BASE =
+        "https://dvm-kit-web.flippback.com/holodeck/public/mock.html";
+      const FIXED_PARAMS = {
+        platform: "ios",
+        sdkVersion: "1.0.1",
+        authToken: "super-duper-secret-flipp-client-testing-integration-key-abc123",
+        language: "LANGUAGE_TYPE_EN",
+        type: "dvm",
+        scrollTo: "",
+        templateUrl: "",
+        width: "",
+        hideMenu: "1",
+      };
+
+      // ---- DOM
+      const inputEl = document.getElementById("inputUrl");
+      const buildBtn = document.getElementById("buildBtn");
+      const copyBtn = document.getElementById("copyBtn");
+      const openBtn = document.getElementById("openBtn");
+      const outputEl = document.getElementById("outputUrl");
+      const statusEl = document.getElementById("status");
+      const metaChipsEl = document.getElementById("metaChips");
+
+      function setStatus(kind, msg) {
+        statusEl.className = "status " + (kind || "");
+        statusEl.textContent = msg || "";
+      }
+
+      function chip(label, value) {
+        const el = document.createElement("div");
+        el.className = "kv";
+        el.innerHTML = `<b>${label}</b>: ${escapeHtml(value)}`;
+        return el;
+      }
+
+      function escapeHtml(s) {
+        return String(s)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#39;");
+      }
+
+      function extractParts(raw) {
+        const trimmed = (raw || "").trim();
+        if (!trimmed) {
+          return { ok: false, error: "Input is empty." };
+        }
+
+        // Try the URL API first (best for query params)
+        let url;
+        try {
+          url = new URL(trimmed);
+        } catch (e) {
+          // If user pasted something not fully qualified, fail with a clear message.
+          return {
+            ok: false,
+            error:
+              "That doesn't look like a valid URL. Make sure it starts with https://",
+          };
+        }
+
+        const merchantId = url.searchParams.get("merchantId") || "";
+        const storeCode = url.searchParams.get("storeCode") || "";
+
+        // publicationId is in the path: .../publications/<publicationId>
+        const match = url.pathname.match(/\/publications\/([^\/?#]+)/);
+        const publicationId = match ? match[1] : "";
+
+        const missing = [];
+        if (!publicationId) missing.push("publicationId (path /publications/<id>)");
+        if (!merchantId) missing.push("merchantId (query param)");
+        if (!storeCode) missing.push("storeCode (query param)");
+
+        if (missing.length) {
+          return {
+            ok: false,
+            error:
+              "Missing: " +
+              missing.join(", ") +
+              ".",
+            publicationId,
+            merchantId,
+            storeCode,
+          };
+        }
+
+        return { ok: true, publicationId, merchantId, storeCode };
+      }
+
+      function buildDvmUrl({ publicationId, merchantId, storeCode }) {
+        const u = new URL(BASE);
+        // fixed params first
+        for (const [k, v] of Object.entries(FIXED_PARAMS)) u.searchParams.set(k, v);
+
+        // dynamic params
+        u.searchParams.set("publicationId", publicationId);
+        u.searchParams.set("storeCode", storeCode);
+        u.searchParams.set("merchantId", merchantId);
+
+        return u.toString();
+      }
+
+      function render(result) {
+        metaChipsEl.innerHTML = "";
+        copyBtn.disabled = true;
+        openBtn.disabled = true;
+
+        if (!result.ok) {
+          outputEl.textContent = "—";
+          setStatus("err", result.error || "Could not parse the input URL.");
+
+          if (result.publicationId) metaChipsEl.appendChild(chip("publicationId", result.publicationId));
+          if (result.merchantId) metaChipsEl.appendChild(chip("merchantId", result.merchantId));
+          if (result.storeCode) metaChipsEl.appendChild(chip("storeCode", result.storeCode));
+          return;
+        }
+
+        const finalUrl = buildDvmUrl(result);
+
+        metaChipsEl.appendChild(chip("publicationId", result.publicationId));
+        metaChipsEl.appendChild(chip("merchantId", result.merchantId));
+        metaChipsEl.appendChild(chip("storeCode", result.storeCode));
+
+        outputEl.textContent = finalUrl;
+        setStatus("ok", "Built successfully.");
+
+        copyBtn.disabled = false;
+        openBtn.disabled = false;
+
+        // Store for buttons
+        copyBtn.dataset.url = finalUrl;
+        openBtn.dataset.url = finalUrl;
+      }
+
+      function buildNow() {
+        const parsed = extractParts(inputEl.value);
+        render(parsed);
+      }
+
+      // Actions
+      buildBtn.addEventListener("click", buildNow);
+
+      inputEl.addEventListener("input", () => {
+        // live update as you type
+        buildNow();
+      });
+
+      copyBtn.addEventListener("click", async () => {
+        const url = copyBtn.dataset.url;
+        if (!url) return;
+        try {
+          await navigator.clipboard.writeText(url);
+          setStatus("ok", "Copied to clipboard.");
+        } catch {
+          // Fallback: select text for manual copy
+          const range = document.createRange();
+          range.selectNodeContents(outputEl);
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+          setStatus("err", "Clipboard blocked—URL selected for manual copy (Ctrl/Cmd+C).");
+        }
+      });
+
+      openBtn.addEventListener("click", () => {
+        const url = openBtn.dataset.url;
+        if (!url) return;
+        window.open(url, "_blank", "noopener,noreferrer");
+      });
+
+      // Build immediately using the default example
+      buildNow();
+    </script>
   </body>
 </html>
